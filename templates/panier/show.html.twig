@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panier
+{% endblock %}
+
+{% block body %}
+	<div class="example-wrapper">
+		<h1>Mon Panier</h1>
+		{% if panier is empty %}
+			<p>Votre panier est vide.</p>
+		{% else %}
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Article</th>
+						<th>Prix</th>
+						<th>Quantité</th>
+						<th>Total</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% set total = 0 %}
+					{% for item in panier %}
+						<tr data-id="{{ item.article.id }}">
+							<td>{{ item.article.titre }}</td>
+							<td>{{ item.article.prix }}
+								€</td>
+							<td>
+								<button class="btn btn-secondary decrease-quantity" data-id="{{ item.article.id }}">-</button>
+								<span class="quantity">{{ item.quantity }}</span>
+								<button class="btn btn-secondary increase-quantity" data-id="{{ item.article.id }}">+</button>
+							</td>
+							<td class="total-item">{{ item.article.prix * item.quantity }}
+								€</td>
+							<td>
+								<button class="btn btn-info remove-item" data-id="{{ item.article.id }}">Supprimer l'article</button>
+							</td>
+						</tr>
+						{% set total = total + (item.article.prix * item.quantity) %}
+					{% endfor %}
+				</tbody>
+			</table>
+			<div>
+				<strong>Total du panier:
+					<span id="total">{{ total }}</span>
+					€</strong>
+			</div>
+			<button id="vider-panier" class="btn btn-danger">Vider le panier</button>
+			<div id="message" style="margin-top: 10px;"></div>
+		{% endif %}
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		$(document).ready(function () { // Supprimer un article du panier
+$('.remove-item').on('click', function () {
+var articleId = $(this).data('id');
+$.ajax({
+url: '{{ path('panier_remove', {id: 'ARTICLE_ID'}) }}'.replace('ARTICLE_ID', articleId),
+method: 'POST',
+success: function (response) {
+$('tr[data-id="' + articleId + '"]').remove();
+$('#total').text(response.total);
+$('#message').html('<div class="alert alert-success">' + response.message + '</div>');
+},
+error: function (xhr) {
+var errorMessage = 'Erreur lors de la suppression de l\'article';
+$('#message').html('<div class="alert alert-danger">' + errorMessage + '</div>');
+}
+});
+});
+
+// Vider le panier
+$('#vider-panier').on('click', function () {
+$.ajax({
+url: '{{ path('panier_vider') }}',
+method: 'POST',
+success: function (response) {
+$('tbody').empty();
+$('#total').text('0');
+$('#message').html('<div class="alert alert-success">' + response.message + '</div>');
+},
+error: function (xhr) {
+var errorMessage = 'Erreur lors de la vidange du panier';
+$('#message').html('<div class="alert alert-danger">' + errorMessage + '</div>');
+}
+});
+});
+
+// Augmenter la quantité
+$('.increase-quantity').on('click', function () {
+var articleId = $(this).data('id');
+$.ajax({
+url: '{{ path('panier_increase', {id: 'ARTICLE_ID'}) }}'.replace('ARTICLE_ID', articleId),
+method: 'POST',
+success: function (response) {
+var tr = $('tr[data-id="' + articleId + '"]');
+tr.find('.quantity').text(response.quantity);
+tr.find('.total-item').text(response.totalItem);
+$('#total').text(response.totalPanier);
+},
+error: function (xhr) {
+var errorMessage = 'Erreur lors de l\'augmentation de la quantité';
+$('#message').html('<div class="alert alert-danger">' + errorMessage + '</div>');
+}
+});
+});
+
+// Diminuer la quantité
+$('.decrease-quantity').on('click', function () {
+var articleId = $(this).data('id');
+$.ajax({
+url: '{{ path('panier_decrease', {id: 'ARTICLE_ID'}) }}'.replace('ARTICLE_ID', articleId),
+method: 'POST',
+success: function (response) {
+var tr = $('tr[data-id="' + articleId + '"]');
+tr.find('.quantity').text(response.quantity);
+tr.find('.total-item').text(response.totalItem);
+$('#total').text(response.totalPanier);
+},
+error: function (xhr) {
+var errorMessage = 'Erreur lors de la diminution de la quantité';
+$('#message').html('<div class="alert alert-danger">' + errorMessage + '</div>');
+}
+});
+});
+});
+	</script>
+{% endblock %}
