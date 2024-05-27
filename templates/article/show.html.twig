@@ -22,7 +22,6 @@
                 <h5 class="card-title">{{ article.titre }}</h5>
                 <p class="card-text">{{ article.description }}</p>
                 <p class="card-text">{{ article.prix }} €</p>
-                <input type="number" id="quantity" name="quantity" value="1" min="1" max="10" class="form-control" style="width: 100px; display: inline;">
                 <button class="btn btn-primary add-to-cart" data-url="{{ path('panier_add', {id: article.id}) }}">Ajouter au panier</button>
 
                 <div id="message" style="margin-top: 10px;"></div>

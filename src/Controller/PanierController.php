@@ -36,7 +36,7 @@ class PanierController extends AbstractController
 
         $session->set('panier', $panier);
 
-        return new JsonResponse(['message' => 'Article ajouté au panier!'], Response::HTTP_OK);
+        return new JsonResponse(['message' => 'Article ajouté au panier !'], Response::HTTP_OK);
     }
 
     #[Route('/panier/increase/{id}', name: 'panier_increase', methods: ['POST'])]
@@ -94,7 +94,7 @@ class PanierController extends AbstractController
             'total' => array_reduce($panier, function ($total, $item) {
                 return $total + ($item['article']->getPrix() * $item['quantity']);
             }, 0),
-            'message' => 'Article supprimé du panier!',
+            'message' => 'Article supprimé du panier !',
         ], Response::HTTP_OK);
     }
 
@@ -102,8 +102,9 @@ class PanierController extends AbstractController
     public function viderPanier(SessionInterface $session): Response
     {
         $session->remove('panier');
+        $this->addFlash('success', 'Panier vidé avec succès !');
 
-        return new JsonResponse(['message' => 'Panier vidé!'], Response::HTTP_OK);
+        return $this->redirectToRoute('panier_show');
     }
 
     #[Route('/panier', name: 'panier_show')]
@@ -117,36 +118,35 @@ class PanierController extends AbstractController
     }
 
     #[Route('/commande', name: 'commande_create', methods: ['POST'])]
-public function createCommande(SessionInterface $session, ArticleRepository $articleRepository, EntityManagerInterface $entityManager): Response
-{
-    $panier = $session->get('panier', []);
+    public function createCommande(SessionInterface $session, ArticleRepository $articleRepository, EntityManagerInterface $entityManager): Response
+    {
+        $panier = $session->get('panier', []);
 
-    if (empty($panier)) {
-        $this->addFlash('error', 'Votre panier est vide.');
+        if (empty($panier)) {
+            $this->addFlash('error', 'Votre panier est vide.');
+            return $this->redirectToRoute('panier_show');
+        }
+
+        $commande = new Commande();
+        $commande->setUser($this->getUser());
+        $total = 0;
+
+        foreach ($panier as $item) {
+            $article = $articleRepository->find($item['article']->getId());
+            if ($article) {
+                $commande->addArticle($article);
+                $total += $article->getPrix() * $item['quantity'] * 100; // Multiplier par 100 pour stocker en centimes
+            }
+        }
+
+        $commande->setTotal($total);
+        $commande->setCreatedAt(new \DateTime());
+        $entityManager->persist($commande);
+        $entityManager->flush();
+
+        $session->remove('panier');
+
+        $this->addFlash('success', 'Votre commande a été passée avec succès !');
         return $this->redirectToRoute('panier_show');
     }
-
-    $commande = new Commande();
-    $commande->setUser($this->getUser());
-    $total = 0;
-
-    foreach ($panier as $item) {
-        $article = $articleRepository->find($item['article']->getId());
-        if ($article) {
-            $commande->addArticle($article);
-            $total += $article->getPrix() * $item['quantity'] * 100; // Multiplier par 100 pour stocker en centimes
-        }
-    }
-
-    $commande->setTotal($total);
-    $commande->setCreatedAt(new \DateTime());
-    $entityManager->persist($commande);
-    $entityManager->flush();
-
-    $session->remove('panier');
-
-    $this->addFlash('success', 'Votre commande a été passée avec succès!');
-    return $this->redirectToRoute('panier_show');
-}
-
 }
