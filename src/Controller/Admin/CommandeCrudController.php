@@ -26,7 +26,7 @@ class CommandeCrudController extends AbstractCrudController
                 ->setCurrency('EUR')
                 ->setLabel('Total (€)')
                 ->formatValue(function ($value) {
-                    return $value / 100;
+                    return $value;
                 }),
             DateTimeField::new('createdAt')->setLabel('Date de création'),
         ];
