@@ -21,15 +21,4 @@ class DefaultController extends AbstractController
         ]);
     }
 
-    #[Route('/produit', name: 'app_product')]
-    public function product(ProductRepository $productRepository): Response
-    {
-        // Récupérer tous les produits depuis la base de données
-        $products = $productRepository->findAll();
-
-        // Retourner la vue avec les produits
-        return $this->render('default/product.html.twig', [
-            'products' => $products,
-        ]);
-    }
 }

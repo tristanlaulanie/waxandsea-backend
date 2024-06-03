@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
+#[UniqueEntity(fields: ['username'], message: 'Il y a déjà un compte avec ce pseudo.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -22,6 +24,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string')]
     private ?string $password = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $email = null;
+
+    #[ORM\Column]
+    private ?bool $isVerified = false;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $verificationToken = null;
 
     public function getId(): ?int
     {
@@ -71,6 +82,44 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getEmail(): ?string
+    {
+        return null;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getVerificationToken(): ?string
+    {
+        return $this->verificationToken;
+    }
+
+    public function setVerificationToken(?string $verificationToken): self
+    {
+        $this->verificationToken = $verificationToken;
+
+        return $this;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    
 
     public function eraseCredentials(): void
     {

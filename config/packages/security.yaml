@@ -13,9 +13,12 @@ security:
       pattern: ^/(_(profiler|wdt)|css|images|js)/
       security: false
     main:
+      entry_point: App\Security\AppAuthenticator
       lazy: true
       provider: app_user_provider
-      custom_authenticator: App\Security\AppAuthenticator
+      custom_authenticator:
+        - App\Security\AppAuthenticator
+        - App\Security\UsersAuthenticator
       logout:
         path: app_logout
       remember_me:
@@ -23,10 +26,12 @@ security:
         lifetime: 604800
         path: /
         always_remember_me: true
+        #always_remember_me: true
 
   access_control:
     - { path: ^/admin, roles: ROLE_ADMIN }
     - { path: ^/profile, roles: ROLE_USER }
+  
 
 when@test:
   security:
