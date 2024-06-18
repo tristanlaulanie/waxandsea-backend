@@ -66,7 +66,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank]
     private ?string $country = null;
 
-
     // Getters et setters...
 
     public function getId(): ?int
@@ -82,7 +81,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
-
         return $this;
     }
 
@@ -100,14 +98,12 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
-
         return $this;
     }
 
@@ -119,7 +115,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): self
     {
         $this->password = $password;
-
         return $this;
     }
 
@@ -147,7 +142,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setFirstname(string $firstname): self
     {
         $this->firstname = $firstname;
-
         return $this;
     }
 
@@ -159,7 +153,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastname(string $lastname): self
     {
         $this->lastname = $lastname;
-
         return $this;
     }
 
@@ -171,7 +164,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTelephone(string $telephone): self
     {
         $this->telephone = $telephone;
-
         return $this;
     }
 
@@ -183,7 +175,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setStreet(string $street): self
     {
         $this->street = $street;
-
         return $this;
     }
 
@@ -195,7 +186,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setStreetnumber(string $streetnumber): self
     {
         $this->streetnumber = $streetnumber;
-
         return $this;
     }
 
@@ -207,7 +197,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTown(string $town): self
     {
         $this->town = $town;
-
         return $this;
     }
 
@@ -219,7 +208,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setZipcode(string $zipcode): self
     {
         $this->zipcode = $zipcode;
-
         return $this;
     }
 
@@ -231,7 +219,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCountry(string $country): self
     {
         $this->country = $country;
-
         return $this;
     }
 }
+

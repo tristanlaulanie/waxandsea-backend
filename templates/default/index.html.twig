@@ -10,15 +10,6 @@
 
 <div class="example-wrapper">
     <h1>Hello ! ✅</h1>
-    Tu es incrits !
 
-    {# je parcours le tableau $utilisateurInscrit #}
-    {% if utilisateurInscrit is not empty %}
-        {% for utilisateur in utilisateurInscrit %}
-            <p>{{ utilisateur.username|first}}</p>
-        {% endfor %}
-    {% else %}
-        <p>No users registered.</p>
-    {% endif %}
 </div>
 {% endblock %}
